@@ -115,14 +115,14 @@ export function SettingsDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-[#121f1c]">Settings</DialogTitle>
+          <DialogDescription className="text-[#121f1c]">
             Configure your API connection and chat preferences
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="apiKey">Helicone API Key</Label>
+            <Label htmlFor="apiKey" className="text-[#121f1c]">Helicone API Key</Label>
             <Input
               id="apiKey"
               type="password"
@@ -131,23 +131,24 @@ export function SettingsDialog({
                 setLocalSettings({ ...localSettings, apiKey: e.target.value })
               }
               placeholder="Enter your Helicone API key"
+              className="text-[#121f1c] placeholder:text-[#121f1c] placeholder:opacity-70"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#121f1c]">
               Your API key is stored locally and never sent to our servers. Get your key from{" "}
               <a
                 href="https://www.helicone.ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline"
+                className="text-[#121f1c] underline"
               >
                 Helicone.ai
               </a>
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="model">Model</Label>
+            <Label htmlFor="model" className="text-[#121f1c]">Model</Label>
             {modelsLoading ? (
-              <div className="text-sm text-muted-foreground py-2">
+              <div className="text-sm text-[#121f1c] py-2">
                 Loading models...
               </div>
             ) : modelsError ? (
@@ -159,8 +160,9 @@ export function SettingsDialog({
                     setLocalSettings({ ...localSettings, model: e.target.value })
                   }
                   placeholder="Enter model ID manually"
+                  className="text-[#121f1c] placeholder:text-[#121f1c] placeholder:opacity-70"
                 />
-                <p className="text-xs text-red-600">
+                <p className="text-xs text-[#121f1c]">
                   {modelsError}. You can enter a model ID manually.
                 </p>
               </div>
@@ -175,12 +177,12 @@ export function SettingsDialog({
                 searchPlaceholder="Search models..."
               />
             )}
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#121f1c]">
               Select a model from the Helicone registry or enter a model ID manually
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="developerMessage">Developer Message (Optional)</Label>
+            <Label htmlFor="developerMessage" className="text-[#121f1c]">Developer Message (Optional)</Label>
             <Textarea
               id="developerMessage"
               value={localSettings.developerMessage}
@@ -192,8 +194,9 @@ export function SettingsDialog({
               }
               placeholder="System instructions for the AI..."
               rows={4}
+              className="text-[#121f1c] placeholder:text-[#121f1c] placeholder:opacity-70"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#121f1c]">
               Optional system message to guide AI behavior
             </p>
           </div>
@@ -202,28 +205,22 @@ export function SettingsDialog({
               variant="outline"
               onClick={handleCheckHealth}
               disabled={healthStatus.checking}
-              className="w-full"
+              className="w-full text-[#121f1c]"
             >
               {healthStatus.checking ? "Checking..." : "Check API Health"}
             </Button>
             {healthStatus.status && (
-              <p
-                className={`text-xs ${
-                  healthStatus.status === "ok"
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
+              <p className="text-xs text-[#121f1c]">
                 {healthStatus.message}
               </p>
             )}
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} className="text-[#121f1c]">
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave} className="text-[#121f1c]">Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

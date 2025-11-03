@@ -148,7 +148,7 @@ export function Chatbot() {
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
-        <h1 className="text-2xl font-semibold">AI Chatbot</h1>
+        <h1 className="text-2xl font-semibold">🤖 Jules bot</h1>
         <Button
           variant="outline"
           size="icon"
@@ -161,7 +161,7 @@ export function Chatbot() {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
+          <div className="flex items-center justify-center h-full text-[#121f1c]">
             <div className="text-center space-y-2">
               <p className="text-lg">Start a conversation</p>
               <p className="text-sm">
@@ -178,51 +178,101 @@ export function Chatbot() {
             }`}
           >
             <Card
-              className={`max-w-[80%] p-4 ${
+              className={`max-w-[80%] p-4 font-ubuntu-mono ${
                 message.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card"
+                  ? "bg-user-chat-bubble text-foreground"
+                  : "bg-llm-chat-bubble text-foreground"
               }`}
             >
               {message.content ? (
                 message.role === "assistant" ? (
-                  <div className="prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-2 prose-headings:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-code:text-sm prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:p-3 prose-blockquote:border-l-4">
+                  <div className="prose dark:prose-invert max-w-none break-words font-ubuntu-mono prose-p:my-2 prose-headings:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-code:text-base prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:p-3 prose-blockquote:border-l-4">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        p: ({ children }: { children?: React.ReactNode }) => <p className="mb-2 last:mb-0">{children}</p>,
-                        ul: ({ children }: { children?: React.ReactNode }) => <ul className="mb-2 list-disc list-inside">{children}</ul>,
-                        ol: ({ children }: { children?: React.ReactNode }) => <ol className="mb-2 list-decimal list-inside">{children}</ol>,
-                        li: ({ children }: { children?: React.ReactNode }) => <li className="mb-1">{children}</li>,
-                        code: ({ inline, children, ...props }: { inline?: boolean; children?: React.ReactNode; [key: string]: any }) => {
+                        p: ({ children }: { children?: React.ReactNode }) => (
+                          <p className="mb-2 last:mb-0">{children}</p>
+                        ),
+                        ul: ({ children }: { children?: React.ReactNode }) => (
+                          <ul className="mb-2 list-disc list-inside">
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children }: { children?: React.ReactNode }) => (
+                          <ol className="mb-2 list-decimal list-inside">
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children }: { children?: React.ReactNode }) => (
+                          <li className="mb-1">{children}</li>
+                        ),
+                        code: ({
+                          inline,
+                          children,
+                          ...props
+                        }: {
+                          inline?: boolean;
+                          children?: React.ReactNode;
+                          [key: string]: any;
+                        }) => {
                           if (inline) {
                             return (
-                              <code className="bg-muted px-1 py-0.5 rounded text-sm" {...props}>
+                              <code
+                                className="bg-muted px-1 py-0.5 rounded text-base"
+                                {...props}
+                              >
                                 {children}
                               </code>
-                            )
+                            );
                           }
                           return (
-                            <code className="block bg-muted p-3 rounded overflow-x-auto text-sm" {...props}>
+                            <code
+                              className="block bg-muted p-3 rounded overflow-x-auto text-base"
+                              {...props}
+                            >
                               {children}
                             </code>
-                          )
+                          );
                         },
                         pre: ({ children }: { children?: React.ReactNode }) => (
                           <pre className="bg-muted p-3 rounded overflow-x-auto mb-2">
                             {children}
                           </pre>
                         ),
-                        blockquote: ({ children }: { children?: React.ReactNode }) => (
+                        blockquote: ({
+                          children,
+                        }: {
+                          children?: React.ReactNode;
+                        }) => (
                           <blockquote className="border-l-4 border-muted-foreground pl-4 italic my-2">
                             {children}
                           </blockquote>
                         ),
-                        h1: ({ children }: { children?: React.ReactNode }) => <h1 className="text-2xl font-bold mb-3 mt-4">{children}</h1>,
-                        h2: ({ children }: { children?: React.ReactNode }) => <h2 className="text-xl font-bold mb-2 mt-3">{children}</h2>,
-                        h3: ({ children }: { children?: React.ReactNode }) => <h3 className="text-lg font-bold mb-2 mt-3">{children}</h3>,
-                        strong: ({ children }: { children?: React.ReactNode }) => <strong className="font-semibold">{children}</strong>,
-                        em: ({ children }: { children?: React.ReactNode }) => <em className="italic">{children}</em>,
+                        h1: ({ children }: { children?: React.ReactNode }) => (
+                          <h1 className="text-2xl font-bold mb-3 mt-4">
+                            {children}
+                          </h1>
+                        ),
+                        h2: ({ children }: { children?: React.ReactNode }) => (
+                          <h2 className="text-xl font-bold mb-2 mt-3">
+                            {children}
+                          </h2>
+                        ),
+                        h3: ({ children }: { children?: React.ReactNode }) => (
+                          <h3 className="text-lg font-bold mb-2 mt-3">
+                            {children}
+                          </h3>
+                        ),
+                        strong: ({
+                          children,
+                        }: {
+                          children?: React.ReactNode;
+                        }) => (
+                          <strong className="font-semibold">{children}</strong>
+                        ),
+                        em: ({ children }: { children?: React.ReactNode }) => (
+                          <em className="italic">{children}</em>
+                        ),
                       }}
                     >
                       {message.content}
@@ -250,7 +300,7 @@ export function Chatbot() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message here... (Enter to send, Shift+Enter for new line)"
-            className="min-h-[60px] resize-none"
+            className="min-h-[60px] resize-none font-ubuntu-mono bg-[#F7CCD7]"
             disabled={isLoading}
           />
           <Button
@@ -270,6 +320,6 @@ export function Chatbot() {
         onSettingsChange={setSettings}
       />
     </div>
-  )
+  );
 }
 

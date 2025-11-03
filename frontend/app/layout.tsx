@@ -1,11 +1,21 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Ubuntu_Mono, Poppins } from "next/font/google"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: "300",
+  variable: "--font-poppins"
+})
+
+const ubuntuMono = Ubuntu_Mono({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-ubuntu-mono"
+})
 
 export const metadata: Metadata = {
-  title: "AI Chatbot",
+  title: "Jules bot 🤖",
   description: "Chat with AI using OpenAI API",
 }
 
@@ -16,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${poppins.variable} ${ubuntuMono.variable} ${poppins.className}`}>{children}</body>
     </html>
   )
 }

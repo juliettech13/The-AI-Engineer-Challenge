@@ -59,18 +59,18 @@ export function ModelSelect({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className="w-full justify-between text-[#121f1c]"
           >
             <span className="truncate">
               {selectedOption ? selectedOption.label : placeholder}
             </span>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-[#121f1c]" />
           </Button>
         </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Select Model</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-[#121f1c]">Select Model</DialogTitle>
+          <DialogDescription className="text-[#121f1c]">
             Choose an AI model from the Helicone registry
           </DialogDescription>
         </DialogHeader>
@@ -79,10 +79,11 @@ export function ModelSelect({
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="text-[#121f1c] placeholder:text-[#121f1c] placeholder:opacity-70"
           />
           <div className="max-h-[400px] overflow-y-auto space-y-1">
             {filteredOptions.length === 0 ? (
-              <div className="text-center py-8 text-sm text-muted-foreground">
+              <div className="text-center py-8 text-sm text-[#121f1c]">
                 No models found
               </div>
             ) : (
@@ -95,7 +96,7 @@ export function ModelSelect({
                     setSearch("")
                   }}
                   className={cn(
-                    "w-full text-left p-3 rounded-md border hover:bg-accent hover:text-accent-foreground transition-colors",
+                    "w-full text-left p-3 rounded-md border hover:bg-accent hover:text-accent-foreground transition-colors text-[#121f1c]",
                     value === option.value && "bg-accent border-primary"
                   )}
                 >
@@ -103,16 +104,16 @@ export function ModelSelect({
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">{option.label}</div>
                       {option.description && (
-                        <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                        <div className="text-xs text-[#121f1c] mt-1 line-clamp-2">
                           {option.description}
                         </div>
                       )}
-                      <div className="text-xs text-muted-foreground mt-1 font-mono">
+                      <div className="text-xs text-[#121f1c] mt-1 font-mono">
                         {option.value}
                       </div>
                     </div>
                     {value === option.value && (
-                      <Check className="h-4 w-4 shrink-0 text-primary" />
+                      <Check className="h-4 w-4 shrink-0 text-[#121f1c]" />
                     )}
                   </div>
                 </button>
