@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
@@ -182,11 +184,58 @@ export function Chatbot() {
                   : "bg-card"
               }`}
             >
-              <div className="whitespace-pre-wrap break-words">
-                {message.content || (
-                  <span className="text-muted-foreground">Thinking...</span>
-                )}
-              </div>
+              {message.content ? (
+                message.role === "assistant" ? (
+                  <div className="prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-2 prose-headings:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-code:text-sm prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:p-3 prose-blockquote:border-l-4">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ children }: { children?: React.ReactNode }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }: { children?: React.ReactNode }) => <ul className="mb-2 list-disc list-inside">{children}</ul>,
+                        ol: ({ children }: { children?: React.ReactNode }) => <ol className="mb-2 list-decimal list-inside">{children}</ol>,
+                        li: ({ children }: { children?: React.ReactNode }) => <li className="mb-1">{children}</li>,
+                        code: ({ inline, children, ...props }: { inline?: boolean; children?: React.ReactNode; [key: string]: any }) => {
+                          if (inline) {
+                            return (
+                              <code className="bg-muted px-1 py-0.5 rounded text-sm" {...props}>
+                                {children}
+                              </code>
+                            )
+                          }
+                          return (
+                            <code className="block bg-muted p-3 rounded overflow-x-auto text-sm" {...props}>
+                              {children}
+                            </code>
+                          )
+                        },
+                        pre: ({ children }: { children?: React.ReactNode }) => (
+                          <pre className="bg-muted p-3 rounded overflow-x-auto mb-2">
+                            {children}
+                          </pre>
+                        ),
+                        blockquote: ({ children }: { children?: React.ReactNode }) => (
+                          <blockquote className="border-l-4 border-muted-foreground pl-4 italic my-2">
+                            {children}
+                          </blockquote>
+                        ),
+                        h1: ({ children }: { children?: React.ReactNode }) => <h1 className="text-2xl font-bold mb-3 mt-4">{children}</h1>,
+                        h2: ({ children }: { children?: React.ReactNode }) => <h2 className="text-xl font-bold mb-2 mt-3">{children}</h2>,
+                        h3: ({ children }: { children?: React.ReactNode }) => <h3 className="text-lg font-bold mb-2 mt-3">{children}</h3>,
+                        strong: ({ children }: { children?: React.ReactNode }) => <strong className="font-semibold">{children}</strong>,
+                        em: ({ children }: { children?: React.ReactNode }) => <em className="italic">{children}</em>,
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <div className="whitespace-pre-wrap break-words">
+                    {message.content}
+                  </div>
+                )
+              ) : (
+                <span className="text-muted-foreground">Thinking...</span>
+              )}
             </Card>
           </div>
         ))}
