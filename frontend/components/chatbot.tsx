@@ -24,7 +24,7 @@ export function Chatbot() {
   const [settings, setSettings] = useState({
     apiKey: "",
     developerMessage: "",
-    model: "gpt-4.1-mini",
+    model: "gpt-4o-mini",
   })
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const currentMessageRef = useRef<string>("")
@@ -93,32 +93,46 @@ export function Chatbot() {
       api_key: settings.apiKey,
     }
 
-    await streamChat(
-      chatRequest,
-      (chunk) => {
-        currentMessageRef.current += chunk
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === assistantMessageId
-              ? { ...msg, content: currentMessageRef.current }
-              : msg
+    try {
+      await streamChat(
+        chatRequest,
+        (chunk) => {
+          currentMessageRef.current += chunk
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantMessageId
+                ? { ...msg, content: currentMessageRef.current }
+                : msg
+            )
           )
-        )
-      },
-      (error) => {
-        console.error("Chat error:", error)
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === assistantMessageId
-              ? { ...msg, content: `Error: ${error.message}` }
-              : msg
+        },
+        (error) => {
+          console.error("Chat error:", error)
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantMessageId
+                ? { ...msg, content: `Error: ${error.message}` }
+                : msg
+            )
           )
+          setIsLoading(false)
+        }
+      )
+    } catch (error) {
+      console.error("Stream chat exception:", error)
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantMessageId
+            ? {
+                ...msg,
+                content: `Error: ${error instanceof Error ? error.message : "Unknown error occurred"}`,
+              }
+            : msg
         )
-        setIsLoading(false)
-      }
-    )
-
-    setIsLoading(false)
+      )
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

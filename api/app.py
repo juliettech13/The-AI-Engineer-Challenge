@@ -10,7 +10,7 @@ import os
 from typing import Optional
 
 # Initialize FastAPI application with a title
-app = FastAPI(title="OpenAI Chat API")
+app = FastAPI(title="Helicone AI Gateway Chat API")
 
 # Configure CORS (Cross-Origin Resource Sharing) middleware
 # This allows the API to be accessed from different domains/origins
@@ -27,36 +27,75 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     developer_message: str  # Message from the developer/system
     user_message: str      # Message from the user
-    model: Optional[str] = "gpt-4.1-mini"  # Optional model selection with default
-    api_key: str          # OpenAI API key for authentication
+    model: Optional[str] = "gpt-4o-mini"  # Optional model selection with default
+    api_key: str          # Helicone API key for authentication
 
 # Define the main chat endpoint that handles POST requests
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     try:
-        # Initialize OpenAI client with the provided API key
-        client = OpenAI(api_key=request.api_key)
-        
+        # Initialize OpenAI client configured for Helicone AI Gateway
+        # Helicone Gateway uses OpenAI SDK format but routes to different providers
+        client = OpenAI(
+            api_key=request.api_key,
+            base_url="https://ai-gateway.helicone.ai/"
+        )
+
         # Create an async generator function for streaming responses
         async def generate():
-            # Create a streaming chat completion request
-            stream = client.chat.completions.create(
-                model=request.model,
-                messages=[
-                    {"role": "developer", "content": request.developer_message},
-                    {"role": "user", "content": request.user_message}
-                ],
-                stream=True  # Enable streaming response
-            )
-            
-            # Yield each chunk of the response as it becomes available
-            for chunk in stream:
-                if chunk.choices[0].delta.content is not None:
-                    yield chunk.choices[0].delta.content
+            try:
+                # Prepare messages for the chat completion
+                messages = []
 
-        # Return a streaming response to the client
-        return StreamingResponse(generate(), media_type="text/plain")
-    
+                # Add developer/system message if provided
+                if request.developer_message:
+                    messages.append({"role": "system", "content": request.developer_message})
+
+                # Add user message
+                messages.append({"role": "user", "content": request.user_message})
+
+                # Create a streaming chat completion request via Helicone Gateway
+                stream = client.chat.completions.create(
+                    model=request.model,
+                    messages=messages,
+                    stream=True  # Enable streaming response
+                )
+
+                # Yield each chunk of the response as it becomes available
+                try:
+                    for chunk in stream:
+                        try:
+                            if hasattr(chunk, 'choices') and chunk.choices and len(chunk.choices) > 0:
+                                delta = chunk.choices[0].delta
+                                if delta and hasattr(delta, 'content') and delta.content is not None:
+                                    content = delta.content
+                                    if content:
+                                        # Yield the content as bytes to ensure proper encoding
+                                        yield content
+                        except Exception as chunk_error:
+                            # Log chunk processing error but continue streaming
+                            print(f"Error processing chunk: {chunk_error}")
+                            continue
+                    # Stream completed successfully
+                except Exception as stream_iter_error:
+                    print(f"Error iterating stream: {stream_iter_error}")
+                    # Yield error but don't raise - let the stream complete gracefully
+                    yield f"\n\nError: {str(stream_iter_error)}"
+            except Exception as stream_error:
+                # Yield error message and let stream complete gracefully
+                yield f"\n\nError: {str(stream_error)}"
+
+        # Return a streaming response to the client with proper headers
+        return StreamingResponse(
+            generate(),
+            media_type="text/plain",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no"
+            }
+        )
+
     except Exception as e:
         # Handle any errors that occur during processing
         raise HTTPException(status_code=500, detail=str(e))

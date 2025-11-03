@@ -13,7 +13,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { ModelSelect } from "@/components/ui/select"
 import { checkHealth } from "@/lib/api"
+import { fetchHeliconeModels, type HeliconeModel } from "@/lib/helicone"
 
 interface Settings {
   apiKey: string
@@ -40,10 +42,48 @@ export function SettingsDialog({
     status: "ok" | "error" | null
     message: string
   }>({ checking: false, status: null, message: "" })
+  const [models, setModels] = useState<HeliconeModel[]>([])
+  const [modelsLoading, setModelsLoading] = useState(false)
+  const [modelsError, setModelsError] = useState<string | null>(null)
+  const [hasFetched, setHasFetched] = useState(false)
 
   useEffect(() => {
     setLocalSettings(settings)
   }, [settings])
+
+  // Fetch models when dialog opens for the first time
+  useEffect(() => {
+    if (isOpen && !hasFetched && !modelsLoading) {
+      setModelsLoading(true)
+      setModelsError(null)
+      setHasFetched(true)
+      fetchHeliconeModels()
+        .then((data) => {
+          console.log("Fetched models:", data.models?.length || 0)
+          setModels(data.models || [])
+          setModelsLoading(false)
+        })
+        .catch((error) => {
+          console.error("Error fetching models:", error)
+          setModelsError(error instanceof Error ? error.message : "Failed to load models")
+          setModelsLoading(false)
+        })
+    }
+  }, [isOpen, hasFetched, modelsLoading])
+
+  // Reset fetch flag when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setHasFetched(false)
+    }
+  }, [isOpen])
+
+  // Transform models into select options
+  const modelOptions = (models || []).map((model) => ({
+    value: model.id,
+    label: model.name,
+    description: model.description || `By ${model.author} • ${(model.contextLength / 1000).toFixed(0)}k context`,
+  }))
 
   const handleSave = () => {
     onSettingsChange(localSettings)
@@ -82,7 +122,7 @@ export function SettingsDialog({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="apiKey">OpenAI API Key</Label>
+            <Label htmlFor="apiKey">Helicone API Key</Label>
             <Input
               id="apiKey"
               type="password"
@@ -90,22 +130,54 @@ export function SettingsDialog({
               onChange={(e) =>
                 setLocalSettings({ ...localSettings, apiKey: e.target.value })
               }
-              placeholder="sk-..."
+              placeholder="Enter your Helicone API key"
             />
             <p className="text-xs text-muted-foreground">
-              Your API key is stored locally and never sent to our servers
+              Your API key is stored locally and never sent to our servers. Get your key from{" "}
+              <a
+                href="https://www.helicone.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                Helicone.ai
+              </a>
             </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="model">Model</Label>
-            <Input
-              id="model"
-              value={localSettings.model}
-              onChange={(e) =>
-                setLocalSettings({ ...localSettings, model: e.target.value })
-              }
-              placeholder="gpt-4.1-mini"
-            />
+            {modelsLoading ? (
+              <div className="text-sm text-muted-foreground py-2">
+                Loading models...
+              </div>
+            ) : modelsError ? (
+              <div className="space-y-2">
+                <Input
+                  id="model"
+                  value={localSettings.model}
+                  onChange={(e) =>
+                    setLocalSettings({ ...localSettings, model: e.target.value })
+                  }
+                  placeholder="Enter model ID manually"
+                />
+                <p className="text-xs text-red-600">
+                  {modelsError}. You can enter a model ID manually.
+                </p>
+              </div>
+            ) : (
+              <ModelSelect
+                value={localSettings.model}
+                onValueChange={(value) =>
+                  setLocalSettings({ ...localSettings, model: value })
+                }
+                options={modelOptions}
+                placeholder="Select a model..."
+                searchPlaceholder="Search models..."
+              />
+            )}
+            <p className="text-xs text-muted-foreground">
+              Select a model from the Helicone registry or enter a model ID manually
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="developerMessage">Developer Message (Optional)</Label>

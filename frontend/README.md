@@ -1,12 +1,14 @@
 # AI Chatbot Frontend
 
-A modern chatbot interface built with Next.js and Shadcn UI that integrates with the OpenAI Chat API backend.
+A modern chatbot interface built with Next.js and Shadcn UI that integrates with the Helicone AI Gateway to access 100+ AI models.
 
 ## Features
 
-- 🚀 **Streaming Responses** - Real-time streaming chat responses from OpenAI API
+- 🚀 **Streaming Responses** - Real-time streaming chat responses via Helicone AI Gateway
+- 🌐 **Multi-Model Support** - Access to 100+ AI models from various providers (OpenAI, Anthropic, Google, Meta, etc.)
+- 🔍 **Model Registry** - Browse and search models from the Helicone registry
 - 🎨 **Modern UI** - Beautiful chatbot interface similar to popular chat applications
-- ⚙️ **Configurable Settings** - Easy configuration of API key, model, and developer messages
+- ⚙️ **Configurable Settings** - Easy configuration of Helicone API key, model selection, and developer messages
 - 💾 **Local Storage** - Settings are saved locally in your browser
 - 🏥 **Health Check** - Built-in API health check functionality
 - 📱 **Responsive Design** - Works seamlessly on desktop and mobile devices
@@ -47,18 +49,22 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## First Time Setup
 
-1. Click the settings icon (⚙️) in the top right corner
-2. Enter your OpenAI API key
-3. Optionally configure:
-   - Model (default: `gpt-4.1-mini`)
+1. Get your Helicone API key from [Helicone.ai](https://www.helicone.ai)
+2. Click the settings icon (⚙️) in the top right corner
+3. Enter your Helicone API key
+4. Select a model from the registry (or enter a model ID manually)
+   - Models are automatically loaded from the Helicone registry
+   - You can search by name, author, or model ID
+   - Default: `gpt-4o-mini`
+5. Optionally configure:
    - Developer message (system instructions for the AI)
-4. Click "Save"
-5. Optionally click "Check API Health" to verify the backend is running
+6. Click "Save"
+7. Optionally click "Check API Health" to verify the backend is running
 
 ## Usage
 
 1. **Start a conversation**: Type your message in the input area at the bottom
-2. **Send messages**: 
+2. **Send messages**:
    - Press `Enter` to send
    - Press `Shift + Enter` for a new line
 3. **View responses**: Assistant responses appear in real-time as they stream from the API
@@ -93,8 +99,10 @@ frontend/
 
 The frontend integrates with the following API endpoints:
 
-- `POST /api/chat` - Streaming chat endpoint
+- `POST /api/chat` - Streaming chat endpoint (routes through Helicone AI Gateway)
 - `GET /api/health` - Health check endpoint
+
+The backend uses [Helicone AI Gateway](https://docs.helicone.ai/gateway) to access 100+ AI models from various providers. The frontend fetches available models from the Helicone registry API.
 
 See the [API README](../api/README.md) for more details on the backend API.
 
@@ -117,6 +125,9 @@ This frontend is designed to work with Vercel:
 
 ## Notes
 
-- Your API key and settings are stored locally in your browser using localStorage
+- Your Helicone API key and settings are stored locally in your browser using localStorage
 - The frontend automatically saves your settings whenever you update them
+- Models are fetched from the Helicone registry when you open the settings dialog
+- If model loading fails, you can manually enter a model ID
 - Make sure the backend API server is running before using the chatbot
+- The backend routes all requests through Helicone AI Gateway, which supports models from OpenAI, Anthropic, Google, Meta, and more
