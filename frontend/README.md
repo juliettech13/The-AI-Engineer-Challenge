@@ -17,12 +17,12 @@ npm install
 ```
 
 3. **Configure API URL** (optional):
-   
+
    Create a `.env.local` file in the `frontend` directory:
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
-   
+
    If not set, the frontend will default to `http://localhost:8000`.
 
 4. **Start the development server**:
@@ -31,7 +31,7 @@ npm run dev
 ```
 
 5. **Open your browser**:
-   
+
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 6. **First-time setup**:
