@@ -16,14 +16,14 @@ cd frontend
 npm install
 ```
 
-3. **Configure API URL** (optional):
+3. **Configure API URL** (required for local development):
 
    Create a `.env.local` file in the `frontend` directory:
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-   If not set, the frontend will default to `http://localhost:8000`.
+   **Note**: In production, the frontend automatically uses a relative URL (same domain). For local development, you must set this environment variable to point to your local API server.
 
 4. **Start the development server**:
 ```bash
@@ -164,15 +164,17 @@ This will install all dependencies listed in `package.json`, including:
 - Markdown rendering libraries
 - And more...
 
-### Step 2: Configure Environment Variables (Optional)
+### Step 2: Configure Environment Variables (Required for Local Development)
 
-Create a `.env.local` file in the `frontend` directory to customize the API URL:
+Create a `.env.local` file in the `frontend` directory to configure the API URL:
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-**Note**: If you don't create this file, the app will default to `http://localhost:8000`.
+**Note**:
+- **For local development**: You must set `NEXT_PUBLIC_API_URL=http://localhost:8000` to connect to your local API server
+- **In production**: The frontend automatically uses a relative URL (same domain), so no environment variable is needed
 
 ### Step 3: Start the Development Server
 
